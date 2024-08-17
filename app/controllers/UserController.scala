@@ -1,6 +1,7 @@
 package controllers
 
 import entities.User
+import exceptions.UserAlreadyExistsException
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
@@ -23,12 +24,14 @@ class UserController @Inject()(cc: ControllerComponents, userService: UserServic
       user => {
         userService.createUser(user).map { id =>
           Created(Json.obj("id" -> id))
+        }.recover {
+          case e: UserAlreadyExistsException => Conflict(Json.obj("error" -> e.getMessage))
+          case e: Exception => InternalServerError(Json.obj("error" -> "An unexpected error occurred"))
         }
       }
     )
   }
 
-  // Create multiple users
   def createMultipleUsers: Action[JsValue] = Action.async(parse.json) { request =>
     logger.info(s"API call: createMultipleUsers, request: ${request.body}")
     request.body.validate[List[User]].fold(
@@ -36,6 +39,8 @@ class UserController @Inject()(cc: ControllerComponents, userService: UserServic
       userDtoList => {
         userService.createMultipleUsers(userDtoList).map { ids =>
           Created(Json.obj("ids" -> ids))
+        }.recover {
+          case e: Exception => InternalServerError(Json.obj("error" -> "An unexpected error occurred"))
         }
       }
     )
@@ -49,6 +54,8 @@ class UserController @Inject()(cc: ControllerComponents, userService: UserServic
         userService.updateUser(user, id).map {
           case 0 => NotFound(Json.obj("message" -> "User not found"))
           case _ => Ok(Json.obj("message" -> "User updated"))
+        }.recover {
+          case e: Exception => InternalServerError(Json.obj("error" -> "An unexpected error occurred"))
         }
       }
     )
@@ -59,6 +66,8 @@ class UserController @Inject()(cc: ControllerComponents, userService: UserServic
     userService.getUser(id).map {
       case Some(user) => Ok(Json.toJson(user))
       case None => NotFound(Json.obj("message" -> "User not found"))
+    }.recover {
+      case e: Exception => InternalServerError(Json.obj("error" -> "An unexpected error occurred"))
     }
   }
 
@@ -67,6 +76,8 @@ class UserController @Inject()(cc: ControllerComponents, userService: UserServic
     userService.deleteUser(id).map {
       case 0 => NotFound(Json.obj("message" -> "User not found"))
       case _ => Ok(Json.obj("message" -> "User deleted"))
+    }.recover {
+      case e: Exception => InternalServerError(Json.obj("error" -> "An unexpected error occurred"))
     }
   }
 
@@ -74,6 +85,8 @@ class UserController @Inject()(cc: ControllerComponents, userService: UserServic
     logger.info("API call: getAllUsers")
     userService.getAllUsers.map { users =>
       Ok(Json.toJson(users))
+    }.recover {
+      case e: Exception => InternalServerError(Json.obj("error" -> "An unexpected error occurred"))
     }
   }
 }
