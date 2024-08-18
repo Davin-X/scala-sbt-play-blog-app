@@ -38,4 +38,8 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   def getAllUsers: Future[Seq[User]] = {
     db.run(Users.query.result)
   }
+
+  def getUserByMail(email: String): Future[Option[User]] = {
+    db.run(Users.query.filter(_.email === email).result.headOption)
+  }
 }

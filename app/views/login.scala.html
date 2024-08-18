@@ -1,0 +1,42 @@
+@import services.LoginRequest
+@(loginForm: Form[LoginRequest])(implicit messages: Messages, request: RequestHeader)
+
+@import helper._
+@import routes._
+
+@main("Login") {
+    <h1>Login</h1>
+
+    @form(action = routes.LogInController.submit, Symbol("class") -> "form") {
+
+        <div class="form-group">
+        @inputText(
+            loginForm("username"),
+            Symbol("_label") -> "Username",
+            Symbol("class") -> "form-control",
+            Symbol("_help") -> "Enter your username"
+        )
+        </div>
+
+        <div class="form-group">
+        @inputPassword(
+            loginForm("password"),
+            Symbol("_label") -> "Password",
+            Symbol("class") -> "form-control",
+            Symbol("_help") -> "Enter your password"
+        )
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+
+        @if(loginForm.hasGlobalErrors) {
+            <div class="alert alert-danger">
+            @loginForm.globalError.map { error =>
+                @messages(error.message)
+            }.getOrElse("An error occurred")
+            </div>
+        }
+    }
+}

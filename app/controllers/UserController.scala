@@ -71,6 +71,13 @@ class UserController @Inject()(cc: ControllerComponents, userService: UserServic
     }
   }
 
+  def getUserByMail(mail: String): Action[AnyContent] = Action.async {
+    logger.info(s"API call: getUserByMail, mail: $mail")
+    userService.getUserByMail(mail).map {
+      case Some(user) => Ok(Json.toJson(user))
+    }
+  }
+
   def deleteUser(id: Int): Action[AnyContent] = Action.async {
     logger.info(s"API call: deleteUser, id: $id")
     userService.deleteUser(id).map {

@@ -33,6 +33,7 @@ object Users {
   val query = TableQuery[Users]
 }
 
+
 object User {
   implicit val userFormat: Format[User] = Json.format[User]
   implicit val userWrites: Writes[User] = Json.writes[User]

@@ -23,3 +23,10 @@ libraryDependencies += "org.postgresql" % "postgresql" % "42.6.0"
 
 // Testing dependencies
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.0" % Test
+
+libraryDependencies += "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0"
+
+libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "10.0.1"
+
+
+libraryDependencies += "com.typesafe.play" %% "filters-helpers" % "2.8.21"
